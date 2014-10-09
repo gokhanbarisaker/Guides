@@ -1,0 +1,27 @@
+Git submodules
+========================================
+
+  - Adding a submodule;
+
+    . $ git submodule add git@mygithost:billboard lib/billboard
+      // This will add module to .gitmodules and
+      // clone module repository to a given path
+
+    . $ git commit -m "Hülooğğğğ"
+      $ git push origin master
+      // This will commit changes and update remote branch
+
+  - Recursively updating submodules
+
+    . $ git submodule update --init --recursive
+    // It ultra logicly skipping current repositories on cyclic dependency
+
+    or
+
+    // Not quite working...
+    //. $ git pull --recurse-submodules
+
+
+  - Removing a submodule
+
+    . // TODO: adsf

@@ -1,0 +1,27 @@
+Shortcuts are activated with
+
+  - "ctrl + a"
+
+combo when screen is enabled. Should not be hold down during shortcut usage.
+
+
+-------------------------------------------------------------------------------
+Shortcuts
+
+  . ? - Shortcut list
+  . c - create new window
+  . n - switch to next window at window list
+  . p - switch to previous window at window list
+  . "ctrl + a" - switch to previously visited window
+  . 0, 1, ..., n - switch to window from window list at given index n.
+  . w - display window list
+  . " - window switcher command-line interface
+  . A - rename current window
+  . k - kill current window
+  . \ - kill all windows belong to current session
+  . d - detaches current session
+
+  ! "screen -ls" - or "screen -list" lists all sessions available on screen
+  ! "screen -r 1835" - reattaches session with given pid.
+
+  

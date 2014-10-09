@@ -1,0 +1,19 @@
+-------------------------------------------
+Terminal
+
+
+  Create a Android Virtual Device (AVD)
+
+    android create avd --force -n test -t android-17 --abi armeabi-v7a
+
+
+  Run virtual device headless
+
+    emulator -avd test -no-skin -no-audio -no-window
+
+--------------------------------------------
+Sources
+
+  - http://paulemtz.blogspot.com.tr/2013/05/android-testing-in-headless-emulator.html
+
+--------------------------------------------

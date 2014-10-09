@@ -1,0 +1,56 @@
+- Create LibVLC instance
+
+    public static LibVLC getLibVlcInstance() throws LibVlcException {
+        LibVLC instance = LibVLC.getExistingInstance();
+        if (instance == null) {
+            Thread.setDefaultUncaughtExceptionHandler(new VlcCrashHandler());
+
+            instance = LibVLC.getInstance();
+            final Context context = VLCApplication.getAppContext();
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+            updateLibVlcSettings(pref);
+            instance.init(context);
+            instance.setOnNativeCrashListener(new LibVLC.OnNativeCrashListener() {
+                @Override
+                public void onNativeCrash() {
+                    Intent i = new Intent(context, NativeCrashActivity.class);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    i.putExtra("PID", android.os.Process.myPid());
+                    context.startActivity(i);
+                }
+            });
+        }
+        return instance;
+    }
+
+
+
+
+- Use surface view for displaying content
+
+
+
+
+- When SurfaceView's surface changed / new surface created, use
+
+    private final SurfaceHolder.Callback mSurfaceCallback = new Callback() {
+
+        @Override
+        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+            if(mLibVLC != null)
+                mLibVLC.attachSurface(holder.getSurface(), IVideoPlayerInstance);
+            }
+        }
+    }
+
+  !!!: IVideoPlayer instance not crucial for base playback and it will be used to optimize frame...
+
+
+
+- Play video with
+
+    AudioServiceController.getInstance().stop(); // Stop the previous playback.
+    mLibVLC.setMediaList(); // Resets media queue/MediaList
+    mLibVLC.getMediaList().add(new Media(mLibVLC, mLocation));
+    mLibVLC.play();

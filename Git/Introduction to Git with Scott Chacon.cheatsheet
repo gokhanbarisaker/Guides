@@ -1,0 +1,86 @@
+
+===============================================
+
+  - Git never deletes a data. Instead, it will just move the pointers around.
+  
+  - File uniqueness for git based on checksums. If 2 or more files contains same checksum, then there will be 1 file with multiple pointers pointing at it.
+
+  - First thing you need to do when installed git is
+
+    . $git config --global user.name "John Appleseed"
+    . $git config --global user.email "ja@gitdummy.org"
+
+    // Also for pretty coloring
+    . $git config --global color.ui true
+
+  - Branches are pointers in git graph
+
+
+Git commands
+===============================================
+  - $git init
+
+    . Initializes (creates) a local repository
+
+  - $git log
+
+    . Logs the commit history of git
+
+  - $git checkout -b <branchname>
+
+    . Creates new branch named <branchname> and switches to it
+
+  - $git checkout <branchname>
+
+    . Switches to given <branchname>
+
+  - $git diff
+
+    . Show added/removed lines in data
+
+  ###########
+  ** Created a branch, modified & commit changes and we want to add those changes to other branch **
+  // Here is what to do
+
+  - $git checkout <otherbranch>
+  - $git merge <modifiedbranch>
+
+  // this is also an alternative to rebase!!!
+  ############
+  ** For creating new branch, here is what to do:
+
+  - $git checkout -b <newbranch> <sourcebranch>
+
+  ** which is same with
+
+  - $git checkout <sourcebranch>
+  - $git checkout -b <newbranch>
+
+  ** also equivalent with
+
+  - $git checkout <sourcebranch>
+  - $git branch <newbranch>
+  - $git checkout <newbranch>
+
+  #############
+
+  - $git branch -d <deletedbranch>
+
+    . Deletes the branch
+
+  - $git push bla@gitserver.com:blablarepo <branchtobepushed>
+
+    . It pushes <branchtobepushed> branch to "bla@gitserver.com:blablarepo" repository, which you may refer with alias as origin, then it will be
+
+  - $git push origin master
+
+  ######
+  ## OK we want to push commits to server, but the origin's head is unavailable in local
+
+  - $git fetch
+  - $git merge origin/master
+  - $git push origin master
+
+  ######
+  - $git remote add <remotename> git://github.com/bla/project.git
+  - $git fetch <remotename>
