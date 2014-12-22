@@ -2,7 +2,7 @@
 ===============================================
 
   - Git never deletes a data. Instead, it will just move the pointers around.
-  
+
   - File uniqueness for git based on checksums. If 2 or more files contains same checksum, then there will be 1 file with multiple pointers pointing at it.
 
   - First thing you need to do when installed git is
@@ -14,6 +14,10 @@
     . $git config --global color.ui true
 
   - Branches are pointers in git graph
+
+  - Little tip
+
+    git config --global --add alias.lol "log --graph --decorate --pretty=oneline --abbrev-commit --all"
 
 
 Git commands
