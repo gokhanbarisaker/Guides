@@ -25,3 +25,16 @@ Git submodules
   - Removing a submodule
 
     . // TODO: adsf
+
+
+  - Pushing changes to submodules
+
+    . $ git commit -am "Tutmayin lan beni!"
+      // This will commit changes to submodule
+
+    . $ git commit -am "Kucuk eniste yine huysuzlandi..."
+      // This will commit submodule changes to root module
+
+    . $ git push --recurse-submodules=on-demand
+      // This will update both remote repository
+    
