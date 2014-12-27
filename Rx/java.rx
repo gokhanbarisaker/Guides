@@ -1,0 +1,345 @@
+
+Flows
+=================================================
+
+  Rx flow,
+
+      .--> Observable --.--> Subscriber
+      |                 |
+      '--- Transform <--'
+
+
+  Observable inner flow,
+
+      --> onSubscribe -->
+
+
+  Subscriber inner flow,
+
+  // TODO: Check on error behaviour for error handling mechanism
+
+                                           .--> onComplete()
+                                          /
+      --> onStart() --.---------------.--:
+                      |               |   \
+                      '--> onNext() --'    '--> onError()
+
+
+
+Naming conventions
+==================================================
+
+  Hot observable,
+
+    emits continuous data where end or beginning of data uncertain for subscriber. Does not guarantees emiting the whole sequence.
+
+
+  Cold observable,
+
+    emits discrete amount of data with starting after a subscription is made. Guarantees emiting the whole sequence.
+
+
+  Connectable observable (RxJava only!),
+
+    only starts emitting after its connect() method called.
+
+
+
+Observable creation
+==================================================
+
+  Observable creation,
+
+    for custom data,
+
+      create(OnSubsribe listener), manual way of emitting data
+
+
+    for group of datas,
+
+      just(Object o), emits given parameters sequentially. Best fit for single object instances.
+
+    for iteratables and arrays,
+
+      from(...), emits given iteratable items synchronously. Supported arguments are,
+
+        . Object[] o, Iterates over given array
+        . Iteratable i, Iterates over given iteratable
+        . Future, emits the future result
+
+
+
+Transformations
+==================================================
+
+  map(), transforms the items emitted
+  by an observable into a function
+
+                       .--> doSomething() -->
+                      /
+    observable.map() :----> doSomething() -->
+                      \
+                       '--> doSomething() -->
+
+
+  flatMap(), concatMap(), flatMapIterable(), transforms the items emitted
+  by an observable into observables
+
+                              .--> observable<data> -->
+                             /
+     observable.flatMap() --:----> observable<data> -->
+               .concatMap()  \
+                              '--> observable<data> -->
+
+       .--> data --.
+      /             \
+     :----> data ----:-- observable.flatMapIterable() --> observable<Iterable<data>>
+      \             /
+       '--> data --'
+
+    !!!: flatMap() is not consistent and might feed data non-sequentially.
+    !!!: For consistent sequential data feed use concatMap()
+
+
+
+  switchMap(), transform the items emitted by an Observable into Observables,
+  and mirror those items emitted by the most-recently transformed Observable.
+
+                                .--> observable<data> --X
+                               /
+     observable.switchMap() --:----------> observable<data> --X
+                               \
+                                '-------------> observable<data> -->
+
+
+    !!!: Remember the observables used for transformation emits data.
+    With switchMap(), they cancel current active emiting observable
+    and starts to emits data itself.
+
+
+
+  scan(), Apply a function to each item emitted by an Observable and
+  emit each successive value
+
+    !!!: Assume observable<data> transforms data by incrementing last char
+    value by 1. e.g. aa --> ab
+
+
+    scan() --> observable<data> --> observable<datb> --> observable<datc> -->
+
+
+
+  groupBy(), divide an Observable into a set of Observables that emit
+  groups of items from the original Observable, organized by key
+
+  ???: The logic needs practice. Not clear on this one, yet!
+
+
+
+  buffer(), periodically gather items emitted by an Observable into bundles and
+  emit these bundles rather than emitting the items one at a time.
+
+  ???: The logic needs practice. Not clear on this one, yet!
+  !!!: Although it is not clear, it seems to be useful on dividing/extracting
+    small sample groups from source.
+
+
+
+  window(), periodically subdivide items from an Observable into Observable
+  windows and emit these windows rather than emitting the items one at a time.
+  A more coarse approach to buffer.
+
+                                    data
+                               .--> data -->
+                              /     data
+                             /
+                            /       data
+     observable.window() --:------> data -->
+                            \       data
+                             \
+                              \     data
+                               '--> data -->
+                                    data
+
+
+
+  cast(), cast all items from the source Observable into a particular
+  type before reemitting them.
+
+
+                                 .--> observable<dataString> -->
+                                /
+     observable.cast(String) --:----> observable<dataString> -->
+                                \
+                                 '--> observable<dataString> -->
+
+
+
+Filtering
+==================================================
+
+  filter(), filter items with given function emitted by an Observable
+
+
+
+  takeLast(), only emit the last n items emitted by an Observable
+
+  last(), only emit the last item emitted by an Observable
+
+  lastOrDefault(), emit only the last item emitted by an Observable,
+  or a default value if the source Observable is empty
+
+  takeLastBuffer(), emit the last n items emitted by an Observable,
+  as a single list item
+
+
+
+  skip(), ignore the first n items emitted by an Observable
+
+  skipLast(), ignore the last n items emitted by an Observable
+
+    !!!: This will delay the emiting till n items received.
+    It first buffers the data and emits only when the data spilled out of buffer.
+
+
+
+  take(), emit only the first n items emitted by an Observable
+
+
+
+  first( ) and takeFirst( ), emit only the first item emitted by an Observable,
+  or the first item that meets some condition
+
+                              .--> bar --X
+                             /
+    observable.first(foo) --:----> foo -->
+                             \
+                              '--> baz --X
+
+
+  firstOrDefault(), same as first(), with a default value if
+  the source Observable is empty.
+
+
+
+  elementAt(), emit item n emitted by the source Observable
+
+    !!!: Throws index out of bounds exception.
+
+
+
+  elementAtOrDefault(), emit item n emitted by the source Observable,
+  or a default item if the source Observable emits fewer than n items
+
+    !!!: Exception safe version of elementAt()
+
+
+
+  sample() or throttleLast(), emit the most recent items emitted by
+  an Observable within periodic time intervals
+
+
+
+  throttleFirst(), emit the first items emitted by an Observable within
+  periodic time intervals
+
+
+
+  throttleWithTimeout( ) or debounce( ), only emit an item from the source
+  Observable after a particular timespan has passed without the Observable
+  emitting any other items
+
+    !!!: Perfect for norrowing down repeating actions. e.g. triggering search
+    events with each keyboard input
+
+
+
+  timeout(), emit items from a source Observable, but issue an exception
+  if no item is emitted in a specified timespan
+
+    !!!: Maybe a socket connection timeout would be a best fit for this fella
+
+
+
+  distinct(), suppress duplicate items emitted by the source Observable
+
+    !!!: From list to set ^^
+
+
+
+  distinctUntilChanged(), suppress duplicate consecutive items emitted by
+  the source Observable.
+  No repeating item serie shall pass but the unique and sole item itself!
+
+
+
+  ofType(), emit only those items from the source Observable that are of
+  a particular class
+
+
+
+  ignoreElements(), discard the items emitted by the source Observable and
+  only pass through the error or completed notification
+
+
+
+Combining
+==================================================
+
+  startWith(), emit a specified sequence of items before beginning to emit
+  the items from the Observable.
+  Inject pre-sequence of emitable items.
+
+
+
+  merge(), combine multiple Observables into one.
+  mergeDelayError(), same with merge(), but delay errors until completion.
+
+
+
+  zip(), combine Observables together via a specified function and emit items
+  based on the results of this function
+
+
+
+  and(), then() and when(), combine sets of items emitted by two or more
+  Observables by means of Pattern and Plan intermediaries
+
+
+
+  combineLatest(), when an item is emitted by either of two Observables,
+  combine the latest item emitted by each Observable via a specified function
+  and emit items based on the results of this function.
+
+
+
+  join() and groupJoin(), combine the items emitted by two Observables whenever
+  one item from one Observable falls within a window of duration specified by
+  an item emitted by the other Observable
+
+
+
+  switchOnNext(), convert an Observable that emits Observables into a single
+  Observable that emits the items emitted by the most-recently emitted of
+  those Observables
+
+
+
+
+
+!!!: for cache to work, observable instance must be reused!
+
+
+// TODO: Learn backpressure
+
+
+
+  Subscriber variations are,
+
+    - Action
+    // TODO: Fill this list
+
+
+  OnSubscribe variations are,
+
+    - Func
